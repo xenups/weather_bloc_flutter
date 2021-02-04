@@ -83,8 +83,6 @@ class SearchPage extends StatelessWidget {
             child: FlatButton(
                 padding: EdgeInsets.all(0),
                 highlightColor: Color.fromRGBO(13, 61, 114, 0.2),
-                // shape: RoundedRectangleBorder(
-                //     borderRadius: new BorderRadius.circular(10.0)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -100,15 +98,23 @@ class SearchPage extends StatelessWidget {
                   ],
                 ),
                 onPressed: () {
-                  weatherBloc.add(FetchWeatherEvent("london"));
+                  weatherBloc.add(FetchWeatherEvent(this.cityController.text));
                 })));
   }
-
   Widget weatherTemperature(BuildContext context) {
     return BlocBuilder<WeatherBloc, WeatherStates>(builder: (context, state) {
+      if(state is WeatherIsLoading){
+        return Center(child : CircularProgressIndicator());
+      }
       if (state is WeatherIsLoaded) {
         return Text(
-          state.getWeather.temp.toString(),
+          state.getWeather.temp.toStringAsFixed(2),
+          style: TextStyle(fontSize: 60),
+        );
+      }
+      if (state is WeatherIsNotLoaded) {
+        return Text(
+          "City not Found",
           style: TextStyle(fontSize: 60),
         );
       }
